@@ -1,0 +1,402 @@
+:root {
+  --ink: #1a1a1a;
+  --paper: #FFFFFC;
+}
+
+@font-face {
+  font-family: 'PlusJakartaSans-Variable';
+  src: url('fonts/PlusJakartaSans-Variable.woff2') format('woff2'),
+       url('fonts/PlusJakartaSans-Variable.woff') format('woff'),
+       url('fonts/PlusJakartaSans-Variable.ttf') format('truetype');
+  font-weight: 200 800;
+  font-display: swap;
+  font-style: normal;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Custom cursor — glass circle (Light -45deg/80%, Refraction 100, Depth 18,
+   Dispersion 71, Frost 0, Splay 53) */
+html.has-glass-cursor,
+html.has-glass-cursor * {
+  cursor: none !important;
+}
+
+.glass-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 55%),
+    rgba(146, 214, 219, 0.2);
+  backdrop-filter: url(#glass-refraction) saturate(150%);
+  -webkit-backdrop-filter: saturate(150%);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12), inset 0 0 6px rgba(255, 255, 255, 0.5);
+  transition: opacity 0.2s ease, width 0.35s cubic-bezier(0.65, 0, 0.35, 1),
+    height 0.35s cubic-bezier(0.65, 0, 0.35, 1), border-radius 0.35s cubic-bezier(0.65, 0, 0.35, 1);
+  will-change: transform;
+}
+
+.glass-cursor.is-active {
+  width: 56px;
+  height: 56px;
+  border-radius: 28px;
+}
+
+/* Morphs from a circle into a rounded rectangle to host the "scroll" label —
+   the shape itself changes, the label text stays flat/horizontal inside it. */
+.glass-cursor.is-scroll {
+  width: 96px;
+  height: 40px;
+  border-radius: 16px;
+}
+
+.glass-cursor__label {
+  font-family: 'PlusJakartaSans-Variable', 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #ff0005;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  white-space: nowrap;
+}
+
+.glass-cursor.is-scroll .glass-cursor__label {
+  opacity: 1;
+}
+
+@media (pointer: coarse) {
+  .glass-cursor {
+    display: none;
+  }
+}
+
+body {
+  margin: 0;
+  background-color: var(--paper);
+  color: var(--ink);
+  font-family: 'Poppins', 'Segoe UI', Helvetica, Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+ 
+/* Header / navbar */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background-color: var(--paper);
+}
+ 
+.logo {
+  display: inline-block;
+  font-family: 'PlusJakartaSans-Variable', 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-size: 1.3rem;
+  font-weight: 400;
+  letter-spacing: -0.06em;
+  color: var(--ink) !important;
+  opacity: 0;
+}
+
+.nav-links {
+  gap: 1rem;
+}
+
+.nav-links .nav-link {
+  display: inline-block;
+  font-family: 'Raleway', 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-size: 1.5rem;
+  font-weight: 200;
+  letter-spacing: -0.05em;
+  color: var(--ink) !important;
+  padding: 0;
+  opacity: 0;
+  position: relative;
+}
+ 
+/* Main empty area */
+.hero {
+  flex: 1 1 auto;
+}
+ 
+/* Status badge, bottom-left */
+.status-badge {
+  position: fixed;
+  left: 2rem;
+  bottom: 2rem;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--ink);
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  letter-spacing: 0.03em;
+  background-color: var(--paper);
+  color: var(--ink);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.3s ease, border-color 0.3s ease, text-shadow 0.3s ease, box-shadow 0.3s ease;
+}
+
+.status-badge__icon {
+  flex-shrink: 0;
+}
+
+.status-badge__icon--moon {
+  display: none;
+}
+
+body.dark-mode .status-badge__icon--sun {
+  display: none;
+}
+
+body.dark-mode .status-badge__icon--moon {
+  display: block;
+}
+
+@media (max-width: 576px) {
+  .status-badge {
+    left: 1rem;
+    bottom: 1rem;
+    font-size: 0.7rem;
+    padding: 0.4rem 0.75rem;
+  }
+}
+
+/* Dark mode — toggled by clicking the status badge */
+body.dark-mode {
+  --ink: #ffffff;
+  --paper: #000000;
+}
+
+body.dark-mode,
+body.dark-mode .image-flow__container,
+body.dark-mode .image-flow__media {
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+body.dark-mode .status-badge {
+  color: #ff462e;
+  border-color: #aef4ff;
+  text-shadow:
+    0 0 2px #ff462e,
+    0 0 6px #ff462e,
+    0 0 14px #ff462e,
+    0 0 26px rgba(255, 70, 46, 0.6);
+  box-shadow:
+    0 0 4px #aef4ff,
+    0 0 10px #aef4ff,
+    0 0 20px rgba(174, 244, 255, 0.7),
+    inset 0 0 6px rgba(174, 244, 255, 0.6);
+}
+
+body.dark-mode .status-badge__icon {
+  filter: drop-shadow(0 0 2px #ff462e) drop-shadow(0 0 6px #ff462e);
+}
+
+/* Image flow — scroll-driven stacking + upward suction exit */
+.image-flow {
+  position: relative;
+}
+
+/* "De ( ... )" — parens open for the image flow, close around "Blanca" at the end */
+.de-blanca {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  font-family: 'PlusJakartaSans-Variable', 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-weight: 600;
+  font-size: clamp(2.75rem, 6vw, 5rem);
+  color: var(--ink);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: color 0.3s ease;
+}
+
+.de-blanca__word {
+  margin-right: 0.2em;
+}
+
+.de-blanca__paren {
+  display: inline-block;
+}
+
+.de-blanca__slot {
+  position: relative;
+  width: 0;
+  height: 1em;
+  overflow: visible;
+}
+
+.de-blanca__blanca {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  opacity: 0;
+  white-space: nowrap;
+}
+
+.image-flow__pin-height {
+  position: relative;
+  height: 750vh;
+}
+
+.image-flow__container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background-color: var(--paper);
+}
+
+.image-flow__media {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 340px;
+  height: 450px;
+  object-fit: cover;
+  background-color: var(--paper);
+  opacity: 0;
+  z-index: 1;
+}
+
+.image-flow__media--wide {
+  width: 420px;
+  height: 320px;
+}
+
+.image-flow__media--wider {
+  width: 460px;
+  height: 300px;
+}
+
+@media (max-width: 576px) {
+  .image-flow__media {
+    width: 230px;
+    height: 305px;
+  }
+
+  .image-flow__media--wide {
+    width: 280px;
+    height: 215px;
+  }
+
+  .image-flow__media--wider {
+    width: 300px;
+    height: 195px;
+  }
+}
+
+/* Projects — image swaps as you scroll, tags either side "text swap" to match */
+.projects {
+  position: relative;
+}
+
+.projects__pin-height {
+  position: relative;
+}
+
+.projects__viewport {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--paper);
+}
+
+.projects__stage {
+  position: relative;
+  width: min(60vw, 760px);
+  height: min(48vw, 520px);
+}
+
+.projects__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.projects__image.is-active {
+  opacity: 1;
+  z-index: 1;
+}
+
+.projects__tag {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: 'PlusJakartaSans-Variable', 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-weight: 600;
+  font-size: clamp(1rem, 2vw, 1.5rem);
+  color: var(--ink);
+  z-index: 2;
+}
+
+.projects__tag--left {
+  left: 3rem;
+  text-align: left;
+}
+
+.projects__tag--right {
+  right: 3rem;
+  text-align: right;
+}
+
+.projects__tag span {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .projects__stage {
+    width: 80vw;
+    height: 60vw;
+  }
+
+  .projects__tag {
+    top: auto;
+    transform: none;
+    font-size: 0.9rem;
+  }
+
+  .projects__tag--left {
+    left: 1rem;
+    bottom: calc(50% - 34vw - 2rem);
+  }
+
+  .projects__tag--right {
+    right: 1rem;
+    bottom: calc(50% - 34vw - 2rem);
+  }
+}
+

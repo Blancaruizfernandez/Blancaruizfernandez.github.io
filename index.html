@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BlancaRuiz</title>
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Raleway:wght@400&display=swap" rel="stylesheet">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Glass cursor: SVG filter defs (refraction + chromatic dispersion) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <filter id="glass-refraction" x="-50%" y="-50%" width="200%" height="200%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.0565" numOctaves="2" seed="4" result="noise"></feTurbulence>
+      <feGaussianBlur in="noise" stdDeviation="2.7" result="softNoise"></feGaussianBlur>
+
+      <feDisplacementMap in="SourceGraphic" in2="softNoise" scale="13.7" xChannelSelector="R" yChannelSelector="G" result="dispR"></feDisplacementMap>
+      <feColorMatrix in="dispR" type="matrix"
+        values="1 0 0 0 0
+                0 0 0 0 0
+                0 0 0 0 0
+                0 0 0 1 0" result="chR"></feColorMatrix>
+
+      <feDisplacementMap in="SourceGraphic" in2="softNoise" scale="18" xChannelSelector="R" yChannelSelector="G" result="dispG"></feDisplacementMap>
+      <feColorMatrix in="dispG" type="matrix"
+        values="0 0 0 0 0
+                0 1 0 0 0
+                0 0 0 0 0
+                0 0 0 1 0" result="chG"></feColorMatrix>
+
+      <feDisplacementMap in="SourceGraphic" in2="softNoise" scale="22.3" xChannelSelector="R" yChannelSelector="G" result="dispB"></feDisplacementMap>
+      <feColorMatrix in="dispB" type="matrix"
+        values="0 0 0 0 0
+                0 0 0 0 0
+                0 0 1 0 0
+                0 0 0 1 0" result="chB"></feColorMatrix>
+
+      <feBlend in="chR" in2="chG" mode="screen" result="rg"></feBlend>
+      <feBlend in="rg" in2="chB" mode="screen"></feBlend>
+    </filter>
+  </svg>
+
+  <!-- Custom cursor: glass circle -->
+  <div class="glass-cursor" id="glassCursor" aria-hidden="true">
+    <span class="glass-cursor__label">Scroll</span>
+  </div>
+
+  <!-- Navbar -->
+  <header class="site-header">
+    <nav class="navbar navbar-expand container-fluid px-4 px-md-5 py-4">
+      <a class="navbar-brand logo" href="#">(B)</a>
+
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"
+              aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse justify-content-end" id="navMenu">
+        <ul class="navbar-nav nav-links">
+          <li class="nav-item">
+            <a class="nav-link" href="#about">about</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#projects">projects</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#contact">contact</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Main canvas: scroll-driven image flow -->
+  <main class="hero">
+    <section class="image-flow">
+      <div class="image-flow__pin-height">
+        <div class="image-flow__container">
+          <div class="de-blanca">
+            <span class="de-blanca__word">De</span>
+            <span class="de-blanca__paren">(</span>
+            <div class="de-blanca__slot">
+              <img class="image-flow__media image-flow__media--wide" src="scrollhome/lavander.png" alt="">
+              <img class="image-flow__media image-flow__media--wide" src="scrollhome/rose-geisha-mockup.png" alt="">
+              <img class="image-flow__media image-flow__media--wide" src="scrollhome/camellia-mockup.png" alt="">
+              <img class="image-flow__media image-flow__media--wide" src="scrollhome/g.png" alt="">
+              <img class="image-flow__media" src="scrollhome/Ruiz.Blanca_3.1_zapatillas_editadoytexto.png" alt="">
+              <img class="image-flow__media image-flow__media--wide" src="scrollhome/PK_MK_FR_TEE_04.png" alt="">
+              <img class="image-flow__media" src="scrollhome/Poster1.png" alt="">
+              <img class="image-flow__media" src="scrollhome/BOLSA-NEGRA.jpg" alt="">
+              <img class="image-flow__media image-flow__media--wider" src="scrollhome/caja-catlogo-abierto.jpg" alt="">
+              <img class="image-flow__media" src="scrollhome/edificio-expo.jpg" alt="">
+              <span class="de-blanca__blanca">Blanca</span>
+            </div>
+            <span class="de-blanca__paren">)</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Projects: image swaps on scroll, tags on either side slide/swap to match -->
+  <section class="projects" id="projects">
+    <div class="projects__pin-height">
+      <div class="projects__viewport">
+        <div class="projects__tag projects__tag--left"><span>En bruto</span></div>
+
+        <div class="projects__stage">
+          <img class="projects__image" src="scrollhome/lavander.png" data-left="En bruto" data-right="Branding" alt="">
+          <img class="projects__image" src="scrollhome/rose-geisha-mockup.png" data-left="Packaging" data-right="Diseño" alt="">
+          <img class="projects__image" src="scrollhome/camellia-mockup.png" data-left="Naming" data-right="Branding" alt="">
+          <img class="projects__image" src="scrollhome/g.png" data-left="Editorial" data-right="Dirección de arte" alt="">
+          <img class="projects__image" src="scrollhome/Ruiz.Blanca_3.1_zapatillas_editadoytexto.png" data-left="Producto" data-right="Fotografía" alt="">
+          <img class="projects__image" src="scrollhome/PK_MK_FR_TEE_04.png" data-left="Textil" data-right="Diseño" alt="">
+          <img class="projects__image" src="scrollhome/Poster1.png" data-left="Cartel" data-right="Editorial" alt="">
+          <img class="projects__image" src="scrollhome/BOLSA-NEGRA.jpg" data-left="Packaging" data-right="Branding" alt="">
+          <img class="projects__image" src="scrollhome/caja-catlogo-abierto.jpg" data-left="Catálogo" data-right="Editorial" alt="">
+          <img class="projects__image" src="scrollhome/edificio-expo.jpg" data-left="Espacio" data-right="Dirección de arte" alt="">
+        </div>
+
+        <div class="projects__tag projects__tag--right"><span>Branding</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Badge inferior izquierda -->
+  <div class="status-badge">
+    <svg class="status-badge__icon status-badge__icon--sun" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <circle cx="12" cy="12" r="4"></circle>
+      <line x1="12" y1="2" x2="12" y2="5"></line>
+      <line x1="12" y1="19" x2="12" y2="22"></line>
+      <line x1="2" y1="12" x2="5" y2="12"></line>
+      <line x1="19" y1="12" x2="22" y2="12"></line>
+      <line x1="4.6" y1="4.6" x2="6.7" y2="6.7"></line>
+      <line x1="17.3" y1="17.3" x2="19.4" y2="19.4"></line>
+      <line x1="4.6" y1="19.4" x2="6.7" y2="17.3"></line>
+      <line x1="17.3" y1="6.7" x2="19.4" y2="4.6"></line>
+    </svg>
+    <svg class="status-badge__icon status-badge__icon--moon" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" stroke="none">
+      <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5Z"></path>
+    </svg>
+    <span>IT&#180;S OPEN&nbsp;! MADRID &middot; EUROPE</span>
+  </div>
+
+  <!-- Bootstrap JS bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- GSAP + ScrollTrigger + ScrambleText -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrambleTextPlugin.min.js"></script>
+  <script src="intro.js"></script>
+  <script src="image-flow.js"></script>
+  <script src="projects-slider.js"></script>
+  <script src="dark-mode.js"></script>
+  <script src="cursor.js"></script>
+  <script src="scramble-text.js"></script>
+</body>
+</html>

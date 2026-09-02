@@ -2,7 +2,7 @@
   if (typeof gsap === "undefined") return;
   if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
 
-  var targets = document.querySelectorAll(".skills__pill");
+  var targets = document.querySelectorAll(".skills__pill, .project-detail__tag");
   if (!targets.length) return;
 
   // Magnetic hover, à la gsap.com/demos/magnetic-button-overwrite-modes: the

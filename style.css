@@ -629,54 +629,41 @@ a.projects__slide[href="project-catalogo.html"] img {
   object-fit: contain;
 }
 
-@media (max-width: 768px) {
-  /* No 3D cylinder, no infinite drag physics here — just a swipe between
-     the active project and the next/previous one, kept intentionally
-     simple for touch. */
+@media (max-width: 1024px) {
+  /* Same cylinder-rotation carousel as desktop (projects-slider.js runs one
+     shared implementation via Pointer Events, which unify mouse and touch)
+     — just a smaller stage, and touch-action:none so a drag here is read
+     as carousel input instead of the browser trying to pan/scroll the
+     page with it. Desktop overlays the two tags at the screen edges either
+     side of the stage; there's no room for that on phone/tablet widths, so
+     they stack instead — title centered above the image, category centered
+     below it — following the same top-to-bottom DOM order the markup
+     already has (tag-left, stage, tag-right), just centered. */
   .projects__glass-title {
     display: none;
   }
 
   .projects__viewport {
     flex-direction: column;
-    padding: 4vh 0;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    padding: 4vh 6vw;
+    touch-action: none;
   }
 
   .projects__tag {
     position: static;
     top: auto;
     transform: none;
-    order: 2;
     text-align: center;
     font-size: 0.9rem;
-    margin-top: 1rem;
-    flex: 0 0 auto;
+    line-height: 1.3;
   }
 
   .projects__stage {
-    order: 1;
     width: 80vw;
     height: 60vw;
-    perspective: none;
-    overflow: hidden;
-  }
-
-  .projects__track {
-    transform-style: flat;
-    position: relative;
-    width: 100%;
-    height: 100%;
-  }
-
-  /* Position/transform/opacity/display are driven inline by
-     projects-slider.js (touch-drag follows the finger 1:1, then snaps) —
-     these are just the resting defaults before JS takes over. */
-  .projects__slide {
-    display: none;
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    transition: transform 0.35s ease, opacity 0.35s ease;
   }
 }
 
@@ -857,6 +844,8 @@ a.projects__slide[href="project-catalogo.html"] img {
   -webkit-backdrop-filter: saturate(150%);
   font-size: 0.95rem;
   letter-spacing: -0.02em;
+  /* Magnetic hover (magnetic-buttons.js) drives x/y via GSAP. */
+  will-change: transform;
 }
 
 @media (max-width: 768px) {
@@ -868,6 +857,11 @@ a.projects__slide[href="project-catalogo.html"] img {
 
   .project-detail__gallery {
     margin-top: 0;
+    /* The desktop-only left/right nudge (translateX ±vw on gallery/info)
+       reads as an intentional offset next to its sticky sibling column —
+       stacked on mobile with nothing beside it, the same shift just looks
+       like the gallery is stuck off-center to the left. */
+    transform: none;
   }
 
   .project-detail__back {
@@ -880,6 +874,7 @@ a.projects__slide[href="project-catalogo.html"] img {
   .project-detail__info {
     position: static;
     flex: 1 1 auto;
+    transform: none;
   }
 }
 

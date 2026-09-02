@@ -43,99 +43,11 @@
     rollText(tagRight, active.dataset.right || "");
   }
 
-  // Mobile: no infinite loop, no cylinder — but the stack still follows
-  // the finger 1:1 while dragging (like a native vertical carousel)
-  // instead of only reacting once a swipe crosses a distance threshold.
-  if (window.innerWidth <= 768) {
-    var stage = document.querySelector(".projects__stage");
-    if (!stage) return;
-
-    var mobileIndex = 0;
-    var dragY = 0;
-    var isTouching = false;
-    var touchStartY = 0;
-    var stageHeight = 0;
-
-    function mod(n, m) {
-      return ((n % m) + m) % m;
-    }
-
-    function measureMobile() {
-      stageHeight = stage.getBoundingClientRect().height;
-    }
-
-    // Only the active slide plus its immediate neighbors are ever shown —
-    // keeps at most 3 autoplaying videos in the DOM at once instead of all
-    // of them, same spirit as the old single-slide-visible approach.
-    function layoutMobile() {
-      slides.forEach(function (slide, i) {
-        var diff = i - mobileIndex;
-        if (diff > count / 2) diff -= count;
-        if (diff < -count / 2) diff += count;
-        var within = Math.abs(diff) <= 1;
-        slide.style.display = within ? "block" : "none";
-        if (within) {
-          slide.style.transform = "translateY(" + (diff * stageHeight + dragY) + "px)";
-          slide.style.opacity = diff === 0 ? "1" : "0.35";
-        }
-      });
-    }
-
-    measureMobile();
-    layoutMobile();
-    updateTags(mobileIndex);
-
-    stage.addEventListener(
-      "touchstart",
-      function (e) {
-        isTouching = true;
-        touchStartY = e.touches[0].clientY;
-        dragY = 0;
-        slides.forEach(function (s) {
-          s.style.transition = "none";
-        });
-      },
-      { passive: true }
-    );
-
-    stage.addEventListener(
-      "touchmove",
-      function (e) {
-        if (!isTouching) return;
-        dragY = e.touches[0].clientY - touchStartY;
-        layoutMobile();
-      },
-      { passive: true }
-    );
-
-    stage.addEventListener(
-      "touchend",
-      function () {
-        isTouching = false;
-        slides.forEach(function (s) {
-          s.style.transition = "transform 0.35s ease, opacity 0.35s ease";
-        });
-
-        var threshold = stageHeight * 0.18;
-        if (Math.abs(dragY) > threshold) {
-          mobileIndex = mod(mobileIndex + (dragY < 0 ? 1 : -1), count);
-          updateTags(mobileIndex);
-        }
-        dragY = 0;
-        layoutMobile();
-      },
-      { passive: true }
-    );
-
-    window.addEventListener("resize", function () {
-      measureMobile();
-      layoutMobile();
-    });
-
-    return;
-  }
-
-  // --- Desktop: infinite vertical loop + cylinder rotation ---
+  // Infinite vertical loop + cylinder rotation — one shared implementation
+  // for every screen size. It's driven by Pointer Events, which already
+  // unify mouse and touch input, so a finger drag on mobile runs the exact
+  // same rotation/inertia/snap logic as a mouse drag on desktop; only the
+  // stage's own CSS size differs (smaller box on narrow screens).
 
   var step = 0; // pixel distance from one slide's top to the next
   var current = 0; // smoothed scroll position (unbounded, wraps visually)
@@ -223,7 +135,14 @@
     dragMoved = 0;
     dragStartY = e.clientY;
     dragStartTarget = target;
-    viewport.setPointerCapture(e.pointerId);
+    // Can throw (NotFoundError) in some browsers/situations — uncaught,
+    // that aborts the rest of this handler and the drag never properly
+    // starts even though isDragging was already set above. Capture is a
+    // nice-to-have (keeps the drag tracking if the finger slides off the
+    // element); losing it isn't worth losing the whole gesture over.
+    try {
+      viewport.setPointerCapture(e.pointerId);
+    } catch (err) {}
   });
 
   viewport.addEventListener("pointermove", function (e) {

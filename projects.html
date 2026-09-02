@@ -20,6 +20,16 @@
 </head>
 <body>
 
+  <!-- Preloader: the (B) mark rises in first, then the side labels fade
+       in, covering the page's own layout/paint while it settles — see
+       preloader.js. Plain CSS keeps it opaque and covering everything
+       from the very first paint, before any JS has even run. -->
+  <div class="preloader" id="preloader" aria-hidden="true">
+    <span class="preloader__side preloader__side--left">Blanca Ruiz Fern&aacute;ndez</span>
+    <span class="preloader__mark">(B)</span>
+    <span class="preloader__side preloader__side--right">Graphic Design</span>
+  </div>
+
   <!-- Glass cursor: SVG filter defs (refraction + chromatic dispersion) -->
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
     <filter id="glass-refraction" x="-50%" y="-50%" width="200%" height="200%" color-interpolation-filters="sRGB">
@@ -170,6 +180,7 @@
   <!-- GSAP + ScrambleText (ScrollTrigger not needed on this page anymore) -->
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrambleTextPlugin.min.js"></script>
+  <script src="preloader.js"></script>
   <script src="intro.js"></script>
   <script src="projects-slider.js"></script>
   <script src="dark-mode.js"></script>

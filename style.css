@@ -165,6 +165,79 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  /* Several elements on the site are intentionally absolutely-positioned
+     and centered via translate(-50%) — .de-blanca__blanca chief among
+     them — which can push past a narrow viewport's edge. Without this,
+     that shows up as a horizontal scrollbar/page shift instead of just
+     being invisibly clipped like it's meant to be. */
+  overflow-x: hidden;
+}
+
+/* Preloader — plain CSS holds it opaque and covering the whole viewport
+   from the very first paint (before GSAP/preloader.js has even loaded),
+   so it actually masks the page's own layout settling instead of
+   flashing the real content first. preloader.js then animates the mark
+   in, the side labels in, and finally fades and removes this entirely. */
+.preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  background-color: var(--paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.preloader__mark {
+  font-family: 'PlusJakartaSans-Variable', 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-size: 1.8rem;
+  font-weight: 400;
+  letter-spacing: -0.06em;
+  color: var(--ink);
+  opacity: 0;
+  transform: translateY(40px);
+}
+
+.preloader__side {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: 'Raleway', 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-size: 0.85rem;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  opacity: 0;
+  white-space: nowrap;
+}
+
+.preloader__side--left {
+  left: 2rem;
+}
+
+.preloader__side--right {
+  right: 2rem;
+}
+
+@media (max-width: 700px) {
+  .preloader__side {
+    font-size: 0.7rem;
+  }
+
+  .preloader__side--left {
+    left: 1.2rem;
+  }
+
+  .preloader__side--right {
+    right: 1.2rem;
+  }
+}
+
+@media (max-width: 420px) {
+  /* Not enough room next to the mark on very narrow phones — the mark
+     rising in on its own still reads as the loading moment. */
+  .preloader__side {
+    display: none;
+  }
 }
  
 /* Header / navbar — always transparent, so page content scrolls straight
@@ -216,6 +289,47 @@ body {
   padding: 0;
   opacity: 0;
   position: relative;
+}
+
+/* Hamburger toggler — relocated by mobile-menu.js to be a sibling of
+   <header> instead of a descendant, specifically so it can show a plain
+   theme color here (var(--ink)) instead of being forced through the
+   header's mix-blend-mode:difference group, where a fixed color like this
+   would just render as whatever the current backdrop is instead of a
+   reliable black/white. Fixed-positioned to sit back in the same visual
+   corner the header's own padding put it in. */
+.navbar-toggler {
+  position: fixed;
+  top: 1.6rem;
+  right: 1.5rem;
+  z-index: 1600;
+}
+
+@media (min-width: 1025px) {
+  .navbar-toggler {
+    display: none !important;
+  }
+}
+
+/* Hidden while the panel is open so it doesn't visually collide with the
+   panel's own (×) close button in the same corner. */
+.navbar-toggler[aria-expanded="true"] {
+  display: none;
+}
+
+.navbar-toggler-icon {
+  background-image: none;
+  width: 1.5em;
+  height: 1.5em;
+  background-color: var(--ink);
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-position: center;
+  mask-position: center;
 }
 
 /* Mobile menu panel — a glass card, always rendered but invisible/inert at
@@ -485,6 +599,16 @@ body.dark-mode .status-badge__icon {
     width: 300px;
     height: 195px;
   }
+
+  /* The clamp()'s 2.75rem floor doesn't actually shrink below it even
+     when 6vw would be smaller than that on a narrow phone — so "De (
+     Blanca )" stayed desktop-sized here. Once the sequence finishes and
+     "Blanca" (centered on its own slot, not the screen) fades in at that
+     size, it's wide enough to push past the right edge of the viewport,
+     which is the overflow this fixes. */
+  .de-blanca {
+    font-size: 2rem;
+  }
 }
 
 /* Projects — infinite vertical slider, centered stage with fixed side tags.
@@ -558,6 +682,13 @@ body.dark-mode .status-badge__icon {
   display: flex;
   align-items: center;
   justify-content: center;
+  /* Unconditional (not just inside the mobile/tablet media query below) —
+     an iPad can report a viewport width outside that breakpoint (landscape,
+     or certain zoom/Safari configurations), and without this here too the
+     browser takes the drag over as a native page-pan on exactly those
+     devices, which is what made the carousel seem broken specifically on
+     iPad. Meaningless for mouse input, so it's harmless at desktop sizes. */
+  touch-action: none;
 }
 
 .projects__tag {
@@ -636,19 +767,14 @@ a.projects__slide[href="project-catalogo.html"] img {
      as carousel input instead of the browser trying to pan/scroll the
      page with it. Desktop overlays the two tags at the screen edges either
      side of the stage; there's no room for that on phone/tablet widths, so
-     they stack instead — title centered above the image, category centered
-     below it — following the same top-to-bottom DOM order the markup
-     already has (tag-left, stage, tag-right), just centered. */
+     both tags just stack centered below the image instead. */
   .projects__glass-title {
     display: none;
   }
 
   .projects__viewport {
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 1.5rem;
-    padding: 4vh 6vw;
+    padding: 4vh 0;
     touch-action: none;
   }
 
@@ -656,12 +782,15 @@ a.projects__slide[href="project-catalogo.html"] img {
     position: static;
     top: auto;
     transform: none;
+    order: 2;
     text-align: center;
     font-size: 0.9rem;
-    line-height: 1.3;
+    margin-top: 1rem;
+    flex: 0 0 auto;
   }
 
   .projects__stage {
+    order: 1;
     width: 80vw;
     height: 60vw;
   }

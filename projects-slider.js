@@ -165,7 +165,12 @@
   // fires there — navigation is done here by hand instead, using
   // elementFromPoint (unaffected by capture) to find the real target.
   viewport.addEventListener("pointerup", function (e) {
-    var wasClick = isDragging && dragMoved <= 6;
+    // A finger never stays as still as a mouse cursor while tapping — 6px
+    // was tuned for mouse precision and made almost every real touch tap
+    // register as a drag instead of a click, so taps silently did nothing
+    // (read as the page being "stuck") on phones/tablets.
+    var clickThreshold = e.pointerType === "touch" ? 14 : 6;
+    var wasClick = isDragging && dragMoved <= clickThreshold;
     endDrag();
     if (wasClick) {
       var el = document.elementFromPoint(e.clientX, e.clientY);

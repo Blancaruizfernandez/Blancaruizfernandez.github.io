@@ -1,4 +1,18 @@
 (function () {
+  // Exposes the header's real rendered height as --header-h so sections
+  // below it (e.g. .projects) can size themselves to exactly fill the rest
+  // of the screen via calc(100vh - var(--header-h)) — more reliable than
+  // chaining flex-grow percentages through ancestors whose own height can
+  // vary (body only has a min-height, so it grows instead of clipping).
+  var header = document.querySelector(".site-header");
+  function setHeaderHeightVar() {
+    if (header) document.documentElement.style.setProperty("--header-h", header.offsetHeight + "px");
+  }
+  setHeaderHeightVar();
+  window.addEventListener("resize", setHeaderHeightVar);
+})();
+
+(function () {
   var words = document.querySelectorAll(".logo, .nav-links .nav-link");
   var deBlanca = document.querySelector(".de-blanca");
 

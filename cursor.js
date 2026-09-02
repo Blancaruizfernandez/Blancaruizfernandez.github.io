@@ -8,6 +8,7 @@
   document.documentElement.classList.add("has-glass-cursor");
 
   var deBlanca = document.querySelector(".de-blanca");
+  var label = cursor.querySelector(".glass-cursor__label");
 
   var targetX = window.innerWidth / 2;
   var targetY = window.innerHeight / 2;
@@ -36,6 +37,7 @@
           e.clientX <= rect.right &&
           e.clientY >= rect.top &&
           e.clientY <= rect.bottom;
+        if (inside && label) label.textContent = "Scroll";
         cursor.classList.toggle("is-scroll", inside);
       }
     },
@@ -73,6 +75,50 @@
     function (e) {
       if (e.target.closest && e.target.closest(interactiveSelector)) {
         cursor.classList.remove("is-active");
+      }
+    },
+    true
+  );
+
+  // Projects page: cursor morphs the same way it does for "Scroll" on the
+  // home page, but reads "See details" while over a project's image.
+  document.addEventListener(
+    "mouseover",
+    function (e) {
+      if (e.target.closest && e.target.closest(".projects__slide")) {
+        if (label) label.textContent = "see details";
+        cursor.classList.add("is-scroll", "is-details");
+      }
+    },
+    true
+  );
+  document.addEventListener(
+    "mouseout",
+    function (e) {
+      if (e.target.closest && e.target.closest(".projects__slide")) {
+        cursor.classList.remove("is-scroll", "is-details");
+      }
+    },
+    true
+  );
+
+  // About page: the pinned paragraph stack is scroll-jacked the same way
+  // the projects slider is, so it gets the same "Scroll" hint on hover.
+  document.addEventListener(
+    "mouseover",
+    function (e) {
+      if (e.target.closest && e.target.closest(".about__stage")) {
+        if (label) label.textContent = "Scroll";
+        cursor.classList.add("is-scroll");
+      }
+    },
+    true
+  );
+  document.addEventListener(
+    "mouseout",
+    function (e) {
+      if (e.target.closest && e.target.closest(".about__stage")) {
+        cursor.classList.remove("is-scroll");
       }
     },
     true
